@@ -1,0 +1,20 @@
+﻿@model DangTienDaoVien.Models.ViewModels.TruyenVM
+@{
+	ViewData["Title"] = "Chi Tiết Truyện";
+}
+<div>
+	<h2 class="my-5">Chi tiết truyện</h2>
+	<div class="mt-5">
+		<p><strong>ID:</strong> @Model.Truyen.Id</p>
+		<p><strong>Tên truyện: </strong>@Model.Truyen.TenTruyen</p>
+		<p><strong>Mô Tả: </strong>@Model.Truyen.MoTa</p>
+		<p><strong>Tác giả: </strong>@Model.Truyen.TacGia.Ten</p>
+	</div>
+	<div class="my-4">
+		<p class="fw-bold">Thể loại: </p>
+		@foreach (var tl in Model.listTheLoai) { <a asp-controller="TheLoai" asp-action="Detail" asp-route-id="@tl.Id" class="border bg-white">@tl.Ten</a>}
+	</div>
+	<div>
+		<a asp-controller="Truyen" asp-action="Index" class="btn btn-outline-dark">Quay lại</a>
+	</div>
+</div>

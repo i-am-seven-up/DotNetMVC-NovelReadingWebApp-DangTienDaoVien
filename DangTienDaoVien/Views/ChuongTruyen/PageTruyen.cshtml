@@ -1,0 +1,55 @@
+﻿@model DangTienDaoVien.Models.ViewModels.ChuongVM 
+@{
+	ViewData["Title"] = Model.ChuongTruyen.TenChuong;
+}
+
+<div>
+	<h2>@Model.ChuongTruyen.TenChuong</h2>
+	<div style="font-size: large;">
+		<p>@Html.Raw(Model.ChuongTruyen.NoiDung.Replace("\r\n", "<br>").Replace("\n", "<br>"))</p>
+	</div>
+    <div class="text-center">
+        @{
+            // Lấy vị trí hiện tại của chương trong danh sách
+            var currentIndex = Model.DanhSachChuong.FindIndex(c => c.Id == Model.ChuongTruyen.Id);
+
+            // Xác định ID của chương trước và chương sau
+            int? previousChuongId = currentIndex > 0 ? Model.DanhSachChuong[currentIndex - 1].Id : (int?)null;
+            int? nextChuongId = currentIndex < Model.DanhSachChuong.Count - 1 ? Model.DanhSachChuong[currentIndex + 1].Id : (int?)null;
+        }
+
+        @if (previousChuongId != null)
+        {
+            <a asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-ChuongTruyenId="@previousChuongId" asp-route-TruyenId="@Model.ChuongTruyen.TruyenId" class="btn btn-primary">← Chương trước</a>
+        }
+
+        @if (nextChuongId != null)
+        {
+            <a asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-ChuongTruyenId="@nextChuongId" asp-route-TruyenId="@Model.ChuongTruyen.TruyenId" class="btn btn-primary">Chương sau →</a>
+        }
+    </div>
+</div>
+
+<button id="scrollToTop" style="display: none;">↑ Lên đầu trang</button>
+
+<script>
+    // Lấy nút
+    const scrollToTopButton = document.getElementById('scrollToTop');
+
+    // Hiển thị nút khi cuộn xuống 100px
+    window.onscroll = function () {
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        scrollToTopButton.style.display = "block";
+      } else {
+        scrollToTopButton.style.display = "none";
+      }
+    };
+
+    // Cuộn lên đầu trang khi nhấn nút
+    scrollToTopButton.addEventListener('click', function () {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Cuộn mượt mà
+      });
+    });
+</script>

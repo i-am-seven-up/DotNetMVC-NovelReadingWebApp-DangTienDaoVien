@@ -1,0 +1,231 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    height: 100%;
+    padding: 0px;
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* Tổ chức các phần tử theo cột */
+    min-height: 100vh; /* Layout toàn bộ phải chiếm chiều cao viewport */
+    margin-bottom: 0;
+}
+
+/* Nền toàn trang */
+@font-face {
+    font-family: 'CustomBodyFont'; /* Tên của font */
+    src: url('/fonts/palatinolinotype_roman.ttf') format('truetype'); /* Đường dẫn đến file font */
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    background-color: #f8f5f0;  /*Màu giấy cổ điển */
+    color: #2c2c2c;  /*Màu chữ xám đậm */
+    font-family: CustomBodyFont, serif; /* Font chữ cổ điển */
+    margin: 0;
+    padding-top: 60px; 
+}
+/* Thanh điều hướng */
+.navbar {
+    background-color: #c8d6c1; /* Xanh lá nhạt */
+    border-bottom: 2px solid #a8b9a3; /* Viền xanh lá đậm */
+}
+
+.navbar-brand img {
+    height: 50px; /* Logo vừa phải */
+}
+
+.navbar a {
+    color: #2c2c2c !important; /* Chữ xám đậm */
+    font-weight: bold;
+    font-size: 18px;
+}
+
+    .navbar a:hover {
+        color: #52734d !important; /* Xanh lá đậm khi hover */
+        text-decoration: none;
+    }
+
+/* Header chính */
+header {
+    background: url('/img/header-thuy-mac.jpg') no-repeat center center;
+    background-size: cover; /* Ảnh nền thủy mặc */
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 30px;
+    font-family: "Brush Script MT", cursive; /* Font kiểu thư pháp */
+}
+
+/* Nền nội dung */
+.container {
+    background-color: #ffffff; /* Nền trắng */
+    border: 1px solid #d6d6d6; /* Viền mỏng */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+    flex-shrink: 0; /* Footer không bị co lại */
+    background-color: #c8d6c1;
+    color: #2c2c2c;
+    text-align: center;
+    border-top: 2px solid #a8b9a3;
+    height: 100px;
+}
+
+/* Các nút */
+.btn {
+    background-color: #52734d; /* Xanh lá đậm */
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+    .btn:hover {
+        background-color: #2c4724; /* Xanh đậm hơn khi hover */
+    }
+
+/* Link trong nội dung */
+a {
+    color: #52734d; /* Xanh lá */
+    text-decoration: none;
+}
+
+    a:hover {
+        color: #2c4724; /* Xanh đậm hơn khi hover */
+        text-decoration: underline;
+    }
+
+/* Kéo dài navbar full width */
+.navbar {
+    width: 100%; /* Đảm bảo chiều rộng toàn màn hình */
+    margin: 0; /* Xóa khoảng trống bên ngoài */
+    padding: 0 20px; /* Tạo khoảng cách padding hợp lý */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+}
+
+    /* Điều chỉnh container-fluid để không giới hạn chiều rộng */
+    .navbar .container-fluid {
+        max-width: 100%; /* Xóa giới hạn chiều rộng */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+/* Tùy chỉnh khoảng cách giữa các mục */
+.navbar-nav {
+    justify-content: space-around; /* Căn đều các mục menu */
+    width: 100%; /* Trải dài toàn bộ thanh điều hướng */
+}
+
+.nav-item {
+    flex-grow: 1; /* Giãn đều các mục */
+    text-align: center; /* Căn giữa nội dung */
+}
+
+.nav-link {
+    display: inline-block;
+    font-size: 18px; /* Kích thước chữ dễ đọc */
+    font-family: "Georgia", serif; /* Phối hợp font với toàn trang */
+}
+
+/* Đưa navbar lên đầu trang và cố định */
+.navbar {
+    position: fixed; /* Cố định vị trí */
+    top: 0; /* Đưa sát lên trên */
+    left: 0; /* Canh bên trái */
+    width: 100%; /* Chiều rộng bằng toàn trang */
+    z-index: 1030; /* Đảm bảo nó nằm trên các phần tử khác */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng để tách biệt */
+}
+
+body {
+    padding-top: 0; /* Chừa không gian cho navbar cố định */
+}
+
+main {
+    flex-grow: 1; /* Đẩy phần footer xuống dưới cùng */
+}
+
+.container {
+    padding-top: 0; /* Xóa padding trên */
+    margin-top: 30px; /* Xóa margin trên */
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+}
+
+.truyenImgReadView{
+    width: 170px; 
+    height: 200px;
+}
+.truyen {
+    width: 100%; 
+    height: auto; 
+}
+
+
+.truyenImg {
+    width: 150px;
+    height: 220px;
+    object-fit: cover; /* Đảm bảo ảnh giữ nguyên tỷ lệ và cắt phần thừa */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}      
+    .truyenImg:hover {  
+       transform: scale(1.05); /* Phóng to nhẹ */  
+    }
+.ten-truyen {
+    display: block; /* Đảm bảo là khối */
+    white-space: nowrap; /* Không cho xuống dòng */
+    overflow: hidden; /* Ẩn phần chữ bị tràn */
+    text-overflow: ellipsis; /* Thêm dấu "..." khi bị tràn */
+    max-width: 100%; /* Đảm bảo không vượt quá chiều rộng phần tử chứa */
+}
+.truyenborder:hover {
+    /*transform: scale(1.1);*/ /* Phóng to 10% */
+    /*background-color: honeydew;*/ /* Nền xanh nhạt */
+    /*transition: transform 0.3s ease, background-color 0.3s ease;*/ /* Hiệu ứng mượt */
+    border: 2px solid #000; /* Viền đen */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6); /* Thêm hiệu ứng đổ bóng */
+    /*transform: scale(1.05);*/ /* Phóng to nhẹ */
+}
+
+h2{
+    color : darkgreen;
+}
+
+#scrollToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: darkolivegreen;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+    #scrollToTop:hover {
+        background-color: darkgreen;
+    }

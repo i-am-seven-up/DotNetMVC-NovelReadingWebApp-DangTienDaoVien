@@ -1,0 +1,18 @@
+﻿@model DangTienDaoVien.Models.TacGia
+@{
+	ViewData["Title"] = "Sửa tác giả";
+}
+<form action="UpdatePOST" method="post">
+	<div class="form-group my-2">
+		<input asp-for="Id" type="hidden" class="form-control" value="@Model.Id" />
+
+		<label asp-for="Ten"></label>
+		<input asp-for="Ten" class="form-control" value="@Model.Ten"/>
+		<span asp-validation-for="Ten" class="text-danger"></span>
+		<hr />
+		<label asp-for="MoTa"></label>
+		<input asp-for="MoTa" class="form-control" value="@Model.MoTa"/>
+		<span asp-validation-for="MoTa" class="text-danger"></span>
+	</div>
+	<button type="submit" class="btn btn-primary"><h4>Chỉnh sửa</h4></button>
+</form>

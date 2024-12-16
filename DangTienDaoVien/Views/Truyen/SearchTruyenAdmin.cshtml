@@ -1,0 +1,108 @@
+﻿@model IEnumerable<DangTienDaoVien.Models.Truyen>
+@inject DangTienDaoVien.DataAccess.Repository.Interfaces.IUnitOfWork _unitOfWork
+@{
+    ViewData["Title"] = "Danh Sách Truyện";
+    ViewBag.TheLoaiList = _unitOfWork.TheLoaiRepo.GetAll().Select(tl => new SelectListItem
+            {
+                Value = tl.Id.ToString(),
+                Text = tl.Ten
+            }).ToList();
+}
+<div class="container mt-4">
+    <div class="row my-2">
+        <div class="col text-primary"><h2>Danh sách truyện</h2></div>
+        <div class="col col-auto">
+            <form asp-controller="Truyen" asp-action="FilterByTheLoai" method="post" class="d-flex">
+                <select name="theLoaiId" class=" me-2" style="height:30px; width:150px; margin-top:9px;">
+                    <option value="">Chọn thể loại</option>
+                    @foreach (var category in ViewBag.TheLoaiList)
+                    {
+                        <option value="@category.Value">@category.Text</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary p-0" style="height:30px; margin-top:9px; width:50px"><i class="bi bi-funnel"></i></button>
+            </form>
+        </div>
+        <div class="col col-auto">
+            <form asp-controller="Truyen" asp-action="SearchTruyenAdminForm" method="get" class="d-flex">
+                <input type="text" name="TenTruyen" class="form-control me-2" placeholder="Tìm kiếm truyện..." style="height:30px; width:200px; margin-top:9px;" />
+                <button type="submit" class="btn btn-primary p-0" style="height:30px; margin-top:9px; width:150px">Tìm kiếm</button>
+            </form>
+        </div>
+        <a asp-action="Create" asp-controller="Truyen" class="col col-auto col-end btn btn-primary text-decoration-none text-white text-end p-0" style="height:30px; margin-top:9px"><i class="bi bi-person-plus-fill"></i> Thêm truyện mới</a>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th width="300px">Tên truyện</th>
+                <th>Ảnh</th>
+                <th>Danh sách chương</th>
+                <th>Trạng thái</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var truyen in Model)
+            {
+                <tr>
+                    <td>@truyen.Id</td>
+                    <td>@truyen.TenTruyen</td>
+                    <th><img src="@truyen.imgURL" style="width:100px; height:120px" /></th>
+                    <td><a asp-controller="ChuongTruyen" asp-action="Index" asp-route-id="@truyen.Id" class="btn btn-primary p-1"><i class="bi bi-journal-text"></i> Danh sách chương</a></td>
+                    <td>
+                        @if (truyen.TrangThai == TrangThai.DangRa)
+                        {
+                            <span class="badge bg-danger">Đang ra</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Đã hoàn thành</span>
+                        }
+                        <form asp-controller="Truyen" asp-action="ChuyenTrangThai" asp-route-TruyenId="@truyen.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link p-0"><i class="bi bi-arrow-repeat"></i> Đổi trạng thái</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="Truyen" asp-action="Update" asp-route-id="@truyen.Id"><i class="bi bi-pencil-square"></i> Sửa</a>
+                        <a class="btn btn-primary open-modal" data-toggle="modal" data-target="#popupModal" href="@Url.Action("getIndex", "Truyen", new { id = truyen.Id })"><i class="bi bi-trash"></i> Xóa</a>
+                        <a asp-controller="Truyen" asp-action="Detail" asp-route-id="@truyen.Id" class="btn btn-primary"><i class="bi bi-layout-text-sidebar-reverse"></i> Chi tiết</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="modalContainer"></div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện modal bị đóng và xóa nội dung cũ
+            $(document).on('hidden.bs.modal', '#popupModal', function () {
+                $('#modalContainer').empty(); // Xóa nội dung modal sau khi đóng
+            });
+
+            // Lắng nghe sự kiện nhấn nút mở modal
+            $(document).on('click', '.open-modal', function (e) {
+                e.preventDefault(); // Ngăn hành vi mặc định
+                var url = $(this).attr('href'); // Lấy URL từ href của nút
+
+                // Tải nội dung từ server vào modalContainer
+                $('#modalContainer').load(url, function (response, status, xhr) {
+                    if (status === "success") {
+                        $('#popupModal').modal('show'); // Hiển thị modal khi tải thành công
+                    } else {
+                        console.error("Lỗi khi tải modal:", xhr.status, xhr.statusText);
+                    }
+                });
+            });
+
+            // Lắng nghe sự kiện nhấn nút Đóng hoặc Xoá
+            $(document).on('click', '.btn-secondary, .btn-danger, .close', function () {
+                $('#popupModal').modal('hide');
+            });
+        });
+    </script>
+}

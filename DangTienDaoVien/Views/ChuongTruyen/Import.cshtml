@@ -1,0 +1,17 @@
+﻿@model DangTienDaoVien.Models.ViewModels.ImportFilesVM
+
+@{
+	ViewData["Title"] = "Import";
+}
+
+<h2>Chọn các files .txt để import</h2>
+
+<form asp-action="Import" asp-controller="ChuongTruyen" method="post" enctype="multipart/form-data">
+	<div class="form-group">
+		<label for="files">Chọn files</label>
+		<input asp-for="Files" type="file" class="form-control" multiple>
+	</div>
+	<div class="mt-4">
+		<button type="submit" class="btn btn-primary"><h4>Import</h4></button>
+	</div>
+</form>

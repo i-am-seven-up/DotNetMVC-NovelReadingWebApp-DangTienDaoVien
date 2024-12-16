@@ -1,0 +1,72 @@
+﻿@model IEnumerable<DangTienDaoVien.Models.TheLoai>
+@{
+    ViewData["Title"] = "Danh Sách Thể Loại";
+}
+
+<div class="container mt-4">
+    <div class="row my-2">
+        <div class="col text-primary"><h2>Danh sách thể loại: @Model.Count() thể loại</h2></div>
+        <div class="col col-auto">
+            <form asp-controller="Theloai" asp-action="SearchTheLoaiForm" class="d-flex">
+                <input type="text" name="TenTL" class="form-control me-2" placeholder="Tìm thể loại..." style="height:30px; margin-top:9px;" />
+                <button type="submit" class="btn btn-primary p-0" style="height:30px; margin-top:9px; width:150px">Tìm kiếm</button>
+            </form> 
+        </div>
+        <a asp-action="Create" asp-controller="TheLoai" class="col col-auto btn btn-primary text-decoration-none text-white text-end p-0" style="height:30px; margin-top:9px"><i class="bi bi-person-plus-fill"></i> Thêm thể loại mới</a>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr> 
+                <th>ID</th>
+                <th>Tên thể loại</th>
+                <th style ="width: 350px;">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody> 
+            @foreach (var the_loai in Model)
+            {
+                <tr> 
+                    <td>@the_loai.Id</td>
+                    <td>@the_loai.Ten</td>
+                    <td><a class="btn btn-primary" asp-controller="TheLoai" asp-action="Update" asp-route-id="@the_loai.Id"><i class="bi bi-pencil-square"></i> Sửa</a>
+                    <a class="btn btn-primary open-modal" data-toggle="modal" data-target="#popupModal" href="@Url.Action("getIndex", "TheLoai", new { id = the_loai.Id })"><i class="bi bi-trash"></i> Xóa</a>
+                    <a asp-controller="TheLoai" asp-action="Detail" asp-route-id ="@the_loai.Id" class="btn btn-primary"><i class="bi bi-layout-text-sidebar-reverse"></i> Chi tiết</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="modalContainer"></div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện modal bị đóng và xóa nội dung cũ
+            $(document).on('hidden.bs.modal', '#popupModal', function () {
+                $('#modalContainer').empty(); // Xóa nội dung modal sau khi đóng
+            });
+
+            // Lắng nghe sự kiện nhấn nút mở modal
+            $(document).on('click', '.open-modal', function (e) {
+                e.preventDefault(); // Ngăn hành vi mặc định
+                var url = $(this).attr('href'); // Lấy URL từ href của nút
+
+                // Tải nội dung từ server vào modalContainer
+                $('#modalContainer').load(url, function (response, status, xhr) {
+                    if (status === "success") {
+                        $('#popupModal').modal('show'); // Hiển thị modal khi tải thành công
+                    } else {
+                        console.error("Lỗi khi tải modal:", xhr.status, xhr.statusText);
+                    }
+                });
+            });
+
+            // Lắng nghe sự kiện nhấn nút Đóng hoặc Xoá
+            $(document).on('click', '.btn-secondary, .btn-danger, .close', function () {
+                $('#popupModal').modal('hide');
+            });
+        });
+    </script>
+}
+

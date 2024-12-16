@@ -1,0 +1,46 @@
+﻿@model DangTienDaoVien.Models.User
+
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<h2>Create User</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" asp-controller="User">
+    <div class="form-group">
+        <label asp-for="Username" class="control-label"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div class="form-group" hidden>
+        <label asp-for="Level" class="control-label"></label>
+        <input asp-for="Level" value="0" class="form-control" />
+        <span asp-validation-for="Level" class="text-danger"></span>
+    </div>
+    <div class="form-group" hidden>
+        <label asp-for="Role" class="control-label"></label>
+        <input asp-for="Role" value="Luyện Khí" class="form-control" />
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+    <div class="form-group" hidden>
+        <label asp-for="TotallReadTime" class="control-label" ></label>
+        <input asp-for="TotallReadTime" value="0" class="form-control" />
+        <span asp-validation-for="TotallReadTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label >Ảnh đại diện </label>
+        <input type="file" name="img" s="form-control" />
+    </div>
+    <br />
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

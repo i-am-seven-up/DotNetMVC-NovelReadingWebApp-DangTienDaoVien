@@ -1,0 +1,119 @@
+﻿@inject DangTienDaoVien.DataAccess.Repository.Interfaces.IUnitOfWork UnitOfWork;
+@using Microsoft.AspNetCore.Http;
+
+@{
+    var now = DateTime.Now;
+    var selectedYear = now.Year; 
+
+    var request = Context.Request;
+
+    if (request.Query.ContainsKey("year"))
+    {
+        selectedYear = int.Parse(request.Query["year"]);
+    }
+
+    var startOfYear = new DateTime(selectedYear, 1, 1);
+    var endOfYear = new DateTime(selectedYear, 12, 31);
+
+    var statsByGenre = UnitOfWork.UserTruyenRepo.GetAll()
+        .Where(ut => ut.DateTime >= startOfYear && ut.DateTime <= endOfYear)
+        .Join(UnitOfWork.TruyenRepo.GetAll(), ut => ut.TruyenId, t => t.Id, (ut, t) => new { ut, t })
+        .Join(UnitOfWork.TheLoaiTruyenRepo.GetAll(), ut_t => ut_t.t.Id, tl => tl.TheLoaiId, (ut_t, tl) => new { ut_t.ut, ut_t.t, tl })
+        .GroupBy(ut_tl => ut_tl.tl.TheLoai.Ten)
+        .Select(g => new { Genre = g.Key, Count = g.Count() })
+        .ToList()
+        .OrderByDescending(ut => ut.Count);
+}
+
+
+@{
+   
+    var years = Enumerable.Range(now.Year - 5, 6).ToList();
+}
+
+<h3>Thống kê lượt xem theo thể loại trong năm</h3>
+<form method="get">
+    <label for="year">Chọn năm:</label>
+    <select id="year" name="year">
+        @foreach (var year in years)
+        {
+            <option value="@year" selected="@(year == selectedYear)">@year</option>
+        }
+    </select>
+
+    <button type="submit">Xem</button>
+</form>
+
+<table id="statsByGenre" class="display">
+    <thead>
+        <tr>
+            <th>Thể loại</th>
+            <th>Số lượt xem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in statsByGenre)
+        {
+            <tr>
+                <td>@item.Genre</td>
+                <td>@item.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="d-flex justify-content-center">
+    <div style="width: 1000px">
+        <canvas id="genreChart"></canvas>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#statsByGenre').DataTable();
+        });
+
+        const ctxGenre = document.getElementById('genreChart').getContext('2d');
+        const genreChart = new Chart(ctxGenre, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(statsByGenre.Select(x => x.Genre))),
+                datasets: [{
+                    label: 'Lượt xem theo thể loại',
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(statsByGenre.Select(x => x.Count))),
+                    backgroundColor: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(statsByGenre.Select((x, index) => $"rgba({(index * 50) % 255}, {(index * 100) % 255}, {(index * 150) % 255}, 0.2)"))),
+                    borderColor: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(statsByGenre.Select((x, index) => $"rgba({(index * 50) % 255}, {(index * 100) % 255}, {(index * 150) % 255}, 1)"))),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Số lượt xem'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Thể loại'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

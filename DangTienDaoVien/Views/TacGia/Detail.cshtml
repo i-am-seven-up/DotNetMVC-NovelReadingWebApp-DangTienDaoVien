@@ -1,0 +1,38 @@
+﻿@model DangTienDaoVien.Models.TacGia
+@{
+	ViewData["Title"] = "Chi Tiết Tác Giả";
+}
+<div>
+	<h2 class="my-5">Chi tiết tác giả</h2>
+	<div class="mt-5">
+		<p><strong>ID:</strong> @Model.Id</p>
+		<p><strong>Tên tác giả:</strong> @Model.Ten</p>
+		<p><strong>Mô Tả:</strong> @Model.MoTa</p>
+	</div>
+	<div class="my-4">
+		<h3 class="mb-3">Danh sách truyện</h3>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Tên Truyện</th>
+					<th>Số chương</th>
+					<th>Trạng thái</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var truyen in Model.listTruyen)
+				{
+					<tr>
+						<td><a asp-action="Detail" asp-controller="Truyen" asp-route-id="@truyen.Id">@truyen.TenTruyen</a></td>
+						<td>@truyen.listChuong.Count()</td>
+						<td>@truyen.TrangThai.ToString()</td>
+					</tr>
+					
+				}
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<a asp-controller="TacGia" asp-action="Index" class="btn btn-outline-dark">Quay lại</a>
+	</div>
+</div>

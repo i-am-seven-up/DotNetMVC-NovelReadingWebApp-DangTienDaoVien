@@ -1,0 +1,40 @@
+﻿@using System.Web
+@model DangTienDaoVien.Models.ChuongTruyen
+
+<div>
+	<h2>Chi tiết chương</h2>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			STT
+		</dt>
+		<dd class="col-sm-10">
+			@Model.STT
+		</dd>
+		<dt class="col-sm-2">
+			Tên chương
+		</dt>
+		<dd class="col-sm-10">
+			@Model.TenChuong
+		</dd>
+		<dt class="col-sm-2">
+			Nội dung
+		</dt>
+		<dd class="col-sm-10">
+			@Html.Raw(Model.NoiDung.Replace("\r\n", "<br>").Replace("\n", "<br>"))
+		</dd>
+		<dt class="col-sm-2">
+			Truyện Id
+		</dt>
+		<dd class="col-sm-10">
+			@Model.TruyenId
+		</dd>
+		<dt class="col-sm-2">
+			Tên truyện
+		</dt>
+		<dd class="col-sm-10">
+			@Model.Truyen.TenTruyen
+		</dd>
+	</dl>
+		<a asp-action="Index" asp-controller="ChuongTruyen" asp-route-id ="@Model.TruyenId" class="btn btn-primary">Quay lại</a>
+</div>

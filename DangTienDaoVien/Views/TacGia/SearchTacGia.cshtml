@@ -1,0 +1,74 @@
+﻿@model IEnumerable<DangTienDaoVien.Models.TacGia>
+@{
+    ViewData["Title"] = "Danh Sách Tác Giả";
+}
+<div class="container mt-4">
+    <div class="row my-2">
+        <div class="col text-primary"><h2>Danh sách tác giả</h2></div>
+        <div class="col col-auto">
+            <form asp-controller="TacGia" asp-action="SearchTacGiaForm" class="d-flex">
+                <input type="text" name="TenTG" class="form-control me-2" placeholder="Tìm tác giả..." style="height:30px; margin-top:9px;" />
+                <button type="submit" class="btn btn-primary p-0" style="height:30px; margin-top:9px; width:150px">Tìm kiếm</button>
+            </form>
+        </div>
+        <div class="col col-auto text-end btn btn-primary text-center"><h5><i class="bi bi-person-plus-fill"></i> <a asp-action="Create" asp-controller="TacGia" class="text-decoration-none text-white">Thêm tác giả mới</a></h5></div>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr> 
+                <th>ID</th>
+                <th>Tên tác giả</th>
+                <th>Số truyện</th>
+                <th style="width:350px">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody> 
+            @foreach (var tac_gia in Model)
+            {
+                <tr> 
+                    <td>@tac_gia.Id</td>
+                    <td>@tac_gia.Ten</td>
+                    <td>@tac_gia.listTruyen.Count()</td>
+                    <td><a class="btn btn-primary" asp-controller="TacGia" asp-action="Update" asp-route-id="@tac_gia.Id"><i class="bi bi-pencil-square"></i> Sửa</a>
+                    <a class="btn btn-primary open-modal" data-toggle="modal" data-target="#popupModal" href="@Url.Action("getIndex", "TacGia", new { id = tac_gia.Id })"><i class="bi bi-trash"></i> Xóa</a>
+                    <a asp-controller="TacGia" asp-action="Detail" asp-route-id ="@tac_gia.Id" class="btn btn-primary"><i class="bi bi-layout-text-sidebar-reverse"></i> Chi tiết</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="modalContainer"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện modal bị đóng và xóa nội dung cũ
+            $(document).on('hidden.bs.modal', '#popupModal', function () {
+                $('#modalContainer').empty(); // Xóa nội dung modal sau khi đóng
+            });
+
+            // Lắng nghe sự kiện nhấn nút mở modal
+            $(document).on('click', '.open-modal', function (e) {
+                e.preventDefault(); // Ngăn hành vi mặc định
+                var url = $(this).attr('href'); // Lấy URL từ href của nút
+
+                // Tải nội dung từ server vào modalContainer
+                $('#modalContainer').load(url, function (response, status, xhr) {
+                    if (status === "success") {
+                        $('#popupModal').modal('show'); // Hiển thị modal khi tải thành công
+                    } else {
+                        console.error("Lỗi khi tải modal:", xhr.status, xhr.statusText);
+                    }
+                });
+            });
+
+            // Lắng nghe sự kiện nhấn nút Đóng hoặc Xoá
+            $(document).on('click', '.btn-secondary, .btn-danger, .close', function () {
+                $('#popupModal').modal('hide');
+            });
+        });
+    </script>
+}
+

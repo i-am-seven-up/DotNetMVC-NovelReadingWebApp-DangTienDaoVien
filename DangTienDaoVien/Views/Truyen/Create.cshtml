@@ -1,0 +1,147 @@
+﻿@model DangTienDaoVien.Models.Truyen
+
+<div class="mt-5">
+    <form action="Create" method="post" enctype="multipart/form-data">
+        <div class="form-group my-2">
+            <label asp-for="TenTruyen">Tên truyện:</label>
+            <input asp-for="TenTruyen" class="form-control" />
+            <span asp-validation-for="TenTruyen" class="text-danger"></span>
+            <hr />
+            <label asp-for="MoTa">Mô tả:</label>
+            <input asp-for="MoTa" class="form-control" />
+            <span asp-validation-for="MoTa" class="text-danger"></span>
+            <hr />
+            <div class="form-group my-2 position-relative">
+                <label asp-for="TacGiaId" class="control-label">Tác giả:</label>
+                <input id="searchTacGia" class="form-control" placeholder="Nhập tên tác giả..." autocomplete="off" />
+                <span asp-validation-for="TacGiaId" class="text-danger"></span>
+                <input type="hidden" asp-for="TacGiaId" id="selectedAuthorId" />
+                <ul id="dropdownTacGia" class="dropdown-menu" style="display: none;"></ul>
+
+                <!-- Hiển thị tên tác giả đã chọn -->
+                <div class="selected-author mt-2">
+                    <span id="selectedAuthorDisplay" class="badge badge-info text-black" style="display: none;">
+                        Tác giả: <span id="selectedAuthorText"></span>
+                        <button type="button" id="clearSelection" class="btn btn-sm btn-danger ml-2">X</button>
+                    </span>
+                </div>
+            </div>
+
+            <select id="TheLoaiId" name="TheLoaiId" class="form-control" multiple="multiple">
+                @if(ViewBag.TheLoaiList != null)
+                {
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.TheLoaiList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+
+            <div class="form-group">
+                <label for="img">Upload Image</label>
+                <input type="file" name="img" class="form-control" />
+            </div>
+
+        </div>
+        <button type="submit" class="btn btn-primary"><h4>Tạo</h4></button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện gõ phím trong ô tìm kiếm
+            $('#searchTacGia').on('input', function () {
+                var keyword = $(this).val().trim(); // Lấy từ khóa người dùng nhập và loại bỏ khoảng trắng
+
+                if (keyword.length === 0) {
+                    $('#dropdownTacGia').hide(); // Ẩn dropdown nếu không có từ khóa
+                    return;
+                }
+
+                // Gửi yêu cầu AJAX đến action Search
+                $.ajax({
+                    url: '@Url.Action("Search", "Truyen")',
+                    type: 'GET',
+                    data: { keyword: keyword }, // Gửi từ khóa tìm kiếm
+                    success: function (data) {
+                        var dropdown = $('#dropdownTacGia');
+                        dropdown.empty(); // Xóa danh sách cũ
+
+                        if (data && data.length > 0) {
+                            data.forEach(function (item) {
+                                dropdown.append(
+                                    `<li class="dropdown-item" data-id="${item.id}" data-name="${item.ten}">
+                                        ${item.ten}
+                                     </li>`
+                                );
+                            });
+                            dropdown.show(); // Hiển thị dropdown
+                        } else {
+                            dropdown.hide(); // Ẩn dropdown nếu không có kết quả
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Lỗi khi tìm kiếm:", error);
+                        $('#dropdownTacGia').hide();
+                    }
+                });
+            });
+
+            // Xử lý khi người dùng chọn một mục trong dropdown
+            $(document).on('click', '.dropdown-item', function () {
+                var selectedName = $(this).data('name'); // Lấy tên tác giả
+                var selectedId = $(this).data('id');    // Lấy ID tác giả
+
+                // Gán giá trị vào input và hiển thị
+                $('#searchTacGia').val(selectedName); // Hiển thị tên trong ô tìm kiếm
+                $('#selectedAuthorText').text(selectedName); // Hiển thị tên trong badge
+                $('#selectedAuthorId').val(selectedId); // Lưu ID vào input ẩn
+                $('#selectedAuthorDisplay').show();   // Hiển thị badge
+
+                // Ẩn dropdown
+                $('#dropdownTacGia').hide();
+            });
+
+            // Xử lý khi người dùng bấm nút xóa lựa chọn
+            $('#clearSelection').on('click', function () {
+                $('#searchTacGia').val(''); // Xóa ô tìm kiếm
+                $('#selectedAuthorText').text(''); // Xóa tên hiển thị
+                $('#selectedAuthorId').val(''); // Xóa id tác giả
+                $('#selectedAuthorDisplay').hide(); // Ẩn badge
+                $('#dropdownTacGia').hide(); // Ẩn dropdown
+            });
+
+            // Ẩn dropdown khi click ra ngoài
+            $(document).on('click', function (event) {
+                if (!$(event.target).closest('#searchTacGia, #dropdownTacGia').length) {
+                    $('#dropdownTacGia').hide();
+                }
+            });
+
+            // Ngăn chặn việc gửi form nếu không có tên tác giả được chọn nhưng vẫn cho phép nhập trực tiếp
+            $('form').on('submit', function (e) {
+                var tacGiaId = $('#selectedAuthorId').val();
+                var tacGiaName = $('#searchTacGia').val().trim();
+
+                if (tacGiaId === '' && tacGiaName.length === 0) {
+                    alert("Vui lòng chọn hoặc nhập tên tác giả.");
+                    e.preventDefault(); // Ngăn chặn gửi form nếu ô trống
+                }
+                // Nếu đã có nhập liệu hoặc đã chọn tác giả, form vẫn sẽ được gửi với giá trị tương ứng
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#TheLoaiId').select2({
+                placeholder: "Chọn thể loại",
+                allowClear: true
+            });
+        });
+
+    </script>
+    
+    <partial name="_ValidationScriptsPartial" />
+
+} 

@@ -1,0 +1,37 @@
+﻿@model DangTienDaoVien.Models.TheLoai
+@{
+	ViewData["Title"] = "Chi Tiết Thể Loại";
+}
+
+<div>
+	<h2 class="my-5">Chi tiết thể loại</h2>
+	<div class="mt-5">
+        <p><strong>ID: </strong>@Model.Id</p>
+        <p><strong>Tên thể loại: </strong>@Model.Ten</p>
+        <p><strong>Mô Tả: </strong>@Model.MoTa</p>
+	</div>
+    <div class="my-4">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Danh sách truyện</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.listTruyen.Count > 0)
+                {
+                    foreach (var truyen in ViewBag.listTruyen)
+                    {
+                        <tr>
+                            <td><a a asp-controller="Truyen" asp-action="Detail" asp-route-id="@truyen.Id">@truyen.TenTruyen</a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+	<div>
+		<a asp-controller="TheLoai" asp-action="Index" class="btn btn-outline-dark">Quay lại</a>
+	</div>
+</div>

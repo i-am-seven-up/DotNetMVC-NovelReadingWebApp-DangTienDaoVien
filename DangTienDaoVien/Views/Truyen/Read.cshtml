@@ -1,0 +1,81 @@
+﻿@model DangTienDaoVien.Models.ViewModels.DocTruyenVM?
+@{
+	ViewData["Title"] = Model.Truyen.TenTruyen;
+}
+<h1 style="font-family:serif; background-color:beige" class="text-center fw-bold">@Model.Truyen.TenTruyen</h1>
+
+<div class="row d-flex my-3 p-3 gap-5">
+	<div class="col col-2 d-inline-block py-2" >	
+		<img src="@Model.Truyen.imgURL" class="truyenImgReadView my-2" style="width:170px; height: 220px"/>
+		<a class="btn text-decoration-none" style="width:170px" asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-TruyenId="@Model.Truyen.Id" asp-route-ChuongTruyenId="@Model.listChuong.FirstOrDefault().Id"><i class="bi bi-book"></i> Đọc từ đầu</a>
+	</div>
+	<div class="align-content-center col-auto">
+		<p><strong>Tác giả: </strong><a asp-action="TruyenTG" asp-controller="Home" asp-route-id="@Model.Truyen.TacGia.Id">@Model.Truyen.TacGia.Ten</a></p>
+		<p><strong>Thể loại:</strong></p>
+		@foreach (var theLoai in Model.listTheLoai)
+		{
+			<a asp-controller="TheLoai" asp-action="TruyenTheLoai" asp-route-id="@theLoai.Id" class="text-decoration-none border " style="padding-left: 20px; padding-right: 20px; background-color:aliceblue; font-size:20px;">@theLoai.Ten</a>
+		}
+	</div>
+</div>
+<div class="border p-3">
+	<h2 style="background-color: beige ; padding: 5px;"><b> Mô Tả:</b></h2>
+	<p style="font-size:20px;"> @Model.Truyen.MoTa</p>
+</div>
+<br />
+<h2 class="fw-bolder">Danh sách chương</h2>
+@if (Model.listChuong != null && Model.listChuong.Count > 0)
+{
+	<div class="row p-2">
+		<div class="col col-6 border mt-3 p-3">
+			@foreach (var chuong in Model.listChuong.Take(50))
+			{
+				<a asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-ChuongTruyenId="@chuong.Id" asp-route-TruyenId="@Model.Truyen.Id" class="text-decoration-none">
+					<h3 style="font-family:Cambria; background-color:beige ; font-size: 15px; overflow: hidden;">@chuong.TenChuong</h3>
+				</a>
+			}
+		</div>
+		<div class="col col-6 border mt-3 p-3">
+			@foreach (var chuong in Model.listChuong.Skip(50))
+			{
+				<a asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-ChuongTruyenId="@chuong.Id" asp-route-TruyenId="@Model.Truyen.Id" class="text-decoration-none">
+					<h3 style="font-family:Cambria; background-color:beige ; font-size: 15px;">@chuong.TenChuong</h3>
+				</a>
+			}
+		</div>
+	</div>
+}
+
+
+<div>
+	<h4>Trang @ViewBag.CurrentPage / @ViewBag.TotalPages</h4>
+
+	@if (ViewBag.TotalPages > 1)
+	{
+		
+		<nav>
+			<ul class="pagination justify-content-center text-black" style="font-size: 20px; font-family: 'Times New Roman', Times, serif">
+				@if (ViewBag.CurrentPage > 1)
+				{
+					<li class="page-item">
+						<a class="page-link text-black" href="@Url.Action("Read", new { id= Model.Truyen.Id, page = ViewBag.CurrentPage - 1 })">Trước</a>
+					</li>
+				}
+
+				@for (int i = 1; i <= ViewBag.TotalPages; i++)
+				{
+					<li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+						<a class="page-link text-black" href="@Url.Action("Read", new { id= Model.Truyen.Id, page = i })">@i</a>
+					</li>
+				}
+
+				@if (ViewBag.CurrentPage < ViewBag.TotalPages)
+				{
+					<li class="page-item">
+						<a class="page-link text-black" href="@Url.Action("Read", new { id= Model.Truyen.Id, page = ViewBag.CurrentPage + 1 })">Tiếp</a>
+					</li>
+				}
+			</ul>
+		</nav>
+	}
+</div>

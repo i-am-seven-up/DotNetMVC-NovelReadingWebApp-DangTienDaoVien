@@ -1,0 +1,38 @@
+﻿@model IEnumerable<DangTienDaoVien.Models.Truyen>
+@{
+    ViewData["Title"] = "Kết quả tìm kiếm";
+}
+   
+<div class="mb-lg-5">
+    <h3 style="font-family:Tahoma"><b>Kết quả tìm kiếm:</b></h3>
+</div>
+
+<div class="row d-flex w-100">
+    @foreach (var truyen in Model)
+    {
+        <div class="col-lg-3 col-md-3 col-sm-4 rounded-3 text-center flex-column my-4">
+
+            <div class="border border-dark border-0  p-0 truyenborder" style="width: 200px; height: auto">
+                <a asp-action="Read" asp-controller="Truyen" asp-route-id="@truyen.Id" asp-route-page="1" class="text-decoration-none">
+                    <img src="@truyen.imgURL" class="truyenImg" />
+                    <br />
+                    <b class="ten-truyen" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">@truyen.TenTruyen</b>
+                    <br />
+                    <p>
+                        <strong class="text-black">Trạng thái:</strong>
+                        @if (truyen.TrangThai == TrangThai.DangRa)
+                        {
+                            <span class="badge bg-danger">Đang ra</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Đã hoàn thành</span>
+                        }
+                    </p>
+                    <p>Số chương: @truyen.listChuong.Count()</p>
+                </a>
+            </div>
+
+        </div>
+    }
+</div>
