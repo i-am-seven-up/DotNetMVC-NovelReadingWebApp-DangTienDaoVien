@@ -22,11 +22,13 @@ namespace DangTienDaoVien.DataAccess.Repository.ClassesImplemented
             var objFromDb = _db.Comment.FirstOrDefault(c => c.Id == comment.Id);
             if (objFromDb != null)
             {
-                objFromDb.TruyenId = comment.TruyenId;
-                objFromDb.Truyen = comment.Truyen;
-                objFromDb.Content = comment.Content;
-                objFromDb.UserId = comment.UserId;
-                objFromDb.User = comment.User;
+                if(comment.TruyenId != null) objFromDb.TruyenId = comment.TruyenId;
+                if (comment.Truyen != null) objFromDb.Truyen = comment.Truyen;
+                if (comment.Content != null) objFromDb.Content = comment.Content;
+                if (comment.UserId != null) objFromDb.UserId = comment.UserId;
+                if (comment.User != null) objFromDb.User = comment.User;
+                if (comment.hasRated != null) objFromDb.hasRated = comment.hasRated;
+                if (comment.rating != null) objFromDb.rating = comment.rating;
                 _db.SaveChanges();
             }
         }

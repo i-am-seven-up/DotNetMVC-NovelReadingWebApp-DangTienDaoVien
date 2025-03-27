@@ -9,11 +9,20 @@ namespace DangTienDaoVien.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly GeminiChatBotService _chatBotService;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, GeminiChatBotService chatBotService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _chatBotService = chatBotService; 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AskChatBot([FromBody] string question)
+        {
+            var response = await _chatBotService.AskChatBotAsync(question);
+            return Json(response);
         }
 
         public IActionResult Index()
@@ -115,7 +124,8 @@ namespace DangTienDaoVien.Controllers
                 }
             }
             ViewBag.dic = dic;
-            return View("Index", truyenlist);
+            ViewBag.TG = tacgia;
+            return View("TruyenTacGia", truyenlist);
         }
     }
 }

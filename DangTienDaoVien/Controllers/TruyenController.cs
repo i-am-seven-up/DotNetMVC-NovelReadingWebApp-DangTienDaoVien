@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace DangTienDaoVien.Controllers
@@ -349,17 +350,37 @@ namespace DangTienDaoVien.Controllers
         }
 
         [HttpPost("PostComment")]
-        public IActionResult PostComment(string Content, int TruyenId)
+        public IActionResult PostComment(string Content, int TruyenId, int? rate)
         {
             var user = (CustomUser)_userManager.GetUserAsync(User).GetAwaiter().GetResult();
-            var cmt = new Comment
+            var cmtRated = _unitOfWork.CommentRepo.Get(c => c.TruyenId == TruyenId && c.UserId == user.UserId && c.hasRated == true); 
+            if(cmtRated != null && rate != null)
             {
-                TruyenId = TruyenId,
-                Content = Content,
-                UserId = user.UserId,
-                Date = DateTime.Now
-            }; 
-            _unitOfWork.CommentRepo.Add(cmt);
+                cmtRated.rating = rate;
+                _unitOfWork.CommentRepo.Update(cmtRated);
+                var cmt = new Comment
+                {
+                    TruyenId = TruyenId,
+                    Content = Content,
+                    UserId = user.UserId,
+                    Date = DateTime.Now,
+                    hasRated = false
+                };
+                _unitOfWork.CommentRepo.Add(cmt);
+            }
+            else
+            {
+                var cmt = new Comment
+                {
+                    TruyenId = TruyenId,
+                    Content = Content,
+                    UserId = user.UserId,
+                    Date = DateTime.Now,
+                    hasRated = true, 
+                    rating = rate
+                };
+                _unitOfWork.CommentRepo.Add(cmt);
+            }
             _unitOfWork.Save();
             return RedirectToAction("Read", "Truyen", new { id = TruyenId, page = 1 });
         }

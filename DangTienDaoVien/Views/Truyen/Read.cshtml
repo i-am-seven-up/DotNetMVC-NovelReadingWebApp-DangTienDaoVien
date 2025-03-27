@@ -1,8 +1,9 @@
-﻿@model DangTienDaoVien.Models.ViewModels.DocTruyenVM?
+﻿@inject DangTienDaoVien.DataAccess.Repository.Interfaces.IUnitOfWork UnitOfWork
+@model DangTienDaoVien.Models.ViewModels.DocTruyenVM?
 @{
 	ViewData["Title"] = Model.Truyen.TenTruyen;
 }
-<h1 style="font-family:serif; background-color:beige" class="text-center fw-bold">@Model.Truyen.TenTruyen</h1>
+<h1 style="font-family:serif;" class="text-center fw-bold">@Model.Truyen.TenTruyen</h1>
 
 <div class="row d-flex my-3 p-3 gap-5">
 	<div class="col col-2 d-inline-block py-2" >	
@@ -11,19 +12,49 @@
 	</div>
 	<div class="align-content-center col-auto">
 		<p><strong>Tác giả: </strong><a asp-action="TruyenTG" asp-controller="Home" asp-route-id="@Model.Truyen.TacGia.Id">@Model.Truyen.TacGia.Ten</a></p>
-		<p><strong>Thể loại:</strong></p>
-		@foreach (var theLoai in Model.listTheLoai)
-		{
-			<a asp-controller="TheLoai" asp-action="TruyenTheLoai" asp-route-id="@theLoai.Id" class="text-decoration-none border " style="padding-left: 20px; padding-right: 20px; background-color:aliceblue; font-size:20px;">@theLoai.Ten</a>
+		<div class="row">
+			<p class="col col-auto"><strong>Thể loại:</strong></p>
+			<div class="col col-auto">
+				@foreach (var theLoai in Model.listTheLoai)
+				{
+					<a asp-controller="TheLoai" asp-action="TruyenTheLoai" asp-route-id="@theLoai.Id" class="text-decoration-none border " style="padding-left: 20px; padding-right: 20px; background-color:aliceblue; font-size:20px;">@theLoai.Ten</a>
+				}
+			</div>
+		</div>
+		@{
+			var rates = UnitOfWork.CommentRepo.GetAll(u => u.TruyenId == Model.Truyen.Id && u.hasRated == true);
+			if (rates == null || !rates.Any())
+			{
+				<p>
+					<strong>
+						Đánh giá:
+
+					</strong>
+					Chưa có lượt đánh giá nào
+				</p>
+			}
+			else
+			{
+				int? count = 0; 
+				foreach(var rt in rates)
+				{
+					count += rt.rating;
+				}
+				float? result = count / (float)rates.Count();
+				<p><strong>Đánh giá: @result <i class="bi bi-star-fill" style="color: gold; position: relative;"></i></strong></p>
+			}
 		}
+		
 	</div>
 </div>
 <div class="border p-3">
-	<h2 style="background-color: beige ; padding: 5px;"><b> Mô Tả:</b></h2>
-	<p style="font-size:20px;"> @Model.Truyen.MoTa</p>
+	<h2 style="padding: 5px; font-family:serif"><b> Mô Tả:</b></h2>
+	<p style="font-size:20px; font-family:'Times New Roman', Times, serif"> @Model.Truyen.MoTa</p>
 </div>
 <br />
-<h2 class="fw-bolder">Danh sách chương</h2>
+<div class="border p-3">
+	<h2 style="padding: 5px; font-family:serif"><b> Danh sách chương</b></h2>
+</div>
 @if (Model.listChuong != null && Model.listChuong.Count > 0)
 {
 	<div class="row p-2">
@@ -31,7 +62,7 @@
 			@foreach (var chuong in Model.listChuong.Take(50))
 			{
 				<a asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-ChuongTruyenId="@chuong.Id" asp-route-TruyenId="@Model.Truyen.Id" class="text-decoration-none">
-					<h3 style="font-family:Cambria; background-color:beige ; font-size: 15px; overflow: hidden;">@chuong.TenChuong</h3>
+					<h3 style="font-family:Cambria; font-size: 15px; overflow: hidden;">@chuong.TenChuong</h3>
 				</a>
 			}
 		</div>
@@ -39,7 +70,7 @@
 			@foreach (var chuong in Model.listChuong.Skip(50))
 			{
 				<a asp-action="PageTruyen" asp-controller="ChuongTruyen" asp-route-ChuongTruyenId="@chuong.Id" asp-route-TruyenId="@Model.Truyen.Id" class="text-decoration-none">
-					<h3 style="font-family:Cambria; background-color:beige ; font-size: 15px;">@chuong.TenChuong</h3>
+					<h3 style="font-family:Cambria; font-size: 15px;">@chuong.TenChuong</h3>
 				</a>
 			}
 		</div>
@@ -79,3 +110,63 @@
 		</nav>
 	}
 </div>
+
+
+<style>
+	.row.p-2 .col .text-decoration-none {
+		display: block;
+		background-color: #f9f9f9;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		margin-bottom: 5px;
+		text-align: left;
+		transition: all 0.3s ease-in-out;
+	}
+
+		.row.p-2 .col .text-decoration-none:hover {
+			transform: translateX(5px);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		}
+
+	.pagination .page-link {
+		color: #ff5e62;
+		border: 1px solid #ddd;
+		transition: background-color 0.3s ease, color 0.3s ease;
+	}
+
+		.pagination .page-link:hover {
+			background-color: #ff9966;
+			color: white;
+			border-color: #ff9966;
+		}
+
+	.pagination .active .page-link {
+		background-color: #ff5e62;
+		border-color: #ff5e62;
+		color: white;
+	}
+
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const items = document.querySelectorAll('.row.p-2 .col .text-decoration-none');
+		items.forEach(item => {
+			item.style.opacity = 0;
+			item.style.transform = 'translateY(10px)';
+		});
+
+		const observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.style.opacity = 1;
+					entry.target.style.transform = 'translateY(0)';
+					entry.target.style.transition = 'all 0.5s ease-in-out';
+				}
+			});
+		});
+
+		items.forEach(item => observer.observe(item));
+	});
+
+</script>

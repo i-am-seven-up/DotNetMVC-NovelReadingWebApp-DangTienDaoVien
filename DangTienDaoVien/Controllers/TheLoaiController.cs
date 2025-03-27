@@ -98,8 +98,22 @@ namespace DangTienDaoVien.Controllers
 		public IActionResult TruyenTheLoai(int id)
 		{
 			var listTruyen = _unitOfWork.TheLoaiTruyenRepo.GetAll(tlt => tlt.TheLoaiId == id).Select(tlt => tlt.Truyen).Where(t => t.listChuong.Count() > 0);
-			ViewBag.TheLoai = _unitOfWork.TheLoaiRepo.Get(tl => tl.Id == id).Ten; 
-			return View (listTruyen);
+			ViewBag.TheLoai = _unitOfWork.TheLoaiRepo.Get(tl => tl.Id == id);
+            Dictionary<int, int> dic = new Dictionary<int, int>();
+            foreach (var truyen in listTruyen)
+            {
+                var lx = _unitOfWork.UserTruyenRepo.GetAll(u => u.TruyenId == truyen.Id);
+                if (lx == null || lx.Count() == 0)
+                {
+                    dic[truyen.Id] = 0;
+                }
+                else
+                {
+                    dic[truyen.Id] = lx.Count();
+                }
+            }
+            ViewBag.dic = dic;
+            return View (listTruyen);
 		}
 
         [HttpPost("SearchTheLoaiForm")]

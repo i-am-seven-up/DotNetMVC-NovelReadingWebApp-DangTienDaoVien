@@ -18,12 +18,15 @@ namespace DangTienDaoVien.Models
         public int UserId { get; set; }
         public int TruyenId { get; set; }
 
+        public int? STT { get; set; }
+
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
         [ForeignKey("TruyenId")]
         public virtual Truyen Truyen { get; set; }
 
-        public DateTime DateTime { get; set; } = DateTime.Now; 
+        public DateTime DateTime { get; set; } = DateTime.Now;
 
+        public bool? bookmark { get; set; } = false; 
     }
 }

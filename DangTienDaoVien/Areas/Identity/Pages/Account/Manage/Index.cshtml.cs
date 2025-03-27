@@ -21,7 +21,7 @@ namespace DangTienDaoVien.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IUnitOfWork _unitOfWork;
         public string? path;
-        public Dictionary<Truyen, int> truyens = new();
+        public Dictionary<Truyen, (int, int, int)> truyens = new();
         public string? name; 
         public IndexModel(
             UserManager<IdentityUser> userManager,
@@ -85,19 +85,31 @@ namespace DangTienDaoVien.Areas.Identity.Pages.Account.Manage
                     .Select(u => u.TruyenId)
                     .Distinct()
                     .ToList();
-            foreach(var id in tIds)
-            {
-                var temp = _unitOfWork.UserTruyenRepo.GetAll(u => u.UserId == usr.UserId && u.TruyenId == id);
-                var truyen = _unitOfWork.TruyenRepo.Get(t => t.Id == id); 
-                if(temp != null)
+            
+                foreach (var id in tIds)
                 {
-                    truyens[truyen] = temp.Count();
+                    var temp = _unitOfWork.UserTruyenRepo.GetAll(u => u.UserId == usr.UserId && u.TruyenId == id);
+                    var chuonglonnhat = temp.MaxBy(u => u.STT);
+                    var chuonggannhat = temp.MaxBy(u => u.DateTime);
+                    var truyen = _unitOfWork.TruyenRepo.Get(t => t.Id == id);
+                    if (temp != null)
+                    {
+                        if (truyens.ContainsKey(truyen))
+                        {
+                            var value = truyens[truyen];
+                            truyens[truyen] = (temp.Count(), value.Item2, value.Item3);
+                        }
+                        else
+                        {
+                            truyens[truyen] = (temp.Count(), (int)chuonglonnhat.STT, (int)chuonggannhat.STT);
+                        }
+                    }
+                    else
+                    {
+                        truyens[truyen] = (0, 0, 0);
+                    }
                 }
-                else
-                {
-                    truyens[truyen] = 0; 
-                }
-            }
+            
         }
 
         public async Task<IActionResult> OnGetAsync()

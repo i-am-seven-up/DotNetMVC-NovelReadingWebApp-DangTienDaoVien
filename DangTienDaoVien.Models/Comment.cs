@@ -26,5 +26,9 @@ namespace DangTienDaoVien.Models
         [ValidateNever]
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
+
+        public bool hasRated { get; set; }
+
+        public int? rating { get; set; } = null;
     }
 }

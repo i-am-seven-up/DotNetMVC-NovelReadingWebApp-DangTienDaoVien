@@ -4,6 +4,7 @@ using DangTienDaoVien.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DangTienDaoVien.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241223021651_them")]
+    partial class them
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,12 +75,6 @@ namespace DangTienDaoVien.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("hasRated")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("rating")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -234,9 +231,6 @@ namespace DangTienDaoVien.DataAccess.Migrations
 
                     b.Property<int?>("STT")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("bookmark")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id", "UserId", "TruyenId");
 

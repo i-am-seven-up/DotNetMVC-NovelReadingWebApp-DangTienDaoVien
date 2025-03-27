@@ -2,36 +2,159 @@
 @{
     ViewData["Title"] = ""; 
 }
-<div class="mb-lg-5">
-    <h3 style="font-family:Tahoma"><b>Danh sách truyện thuộc thể loại: @ViewBag.TheLoai</b></h3>
+
+
+<link rel="stylesheet" href="~/css/index.css" />
+<div>
+    <div class="mb-lg-5">
+        <h2 style="font-family:serif; color:black" class=" py-1"><b>Danh sách truyện thuộc thể loại: @ViewBag.TheLoai.Ten</b></h2>
+    </div>
+
+    <div class="row d-flex">
+        @foreach (var truyen in Model)
+        {
+                <div class="col-lg-3 col-md-3 col-sm-4 rounded-3 text-center flex-column my-4 truyen-item" style="opacity: 0; transition: opacity 0.5s ease-in-out; border-radius: 10px;">
+
+                    <div class="border border-dark border-0 p-0 truyenborder" style="width: 150px; height: auto; border-radius: 10px;">
+                        <a asp-action="Read" asp-controller="Truyen" asp-route-id="@truyen.Id" asp-route-page="1" class="text-decoration-none">
+                            <img src="@truyen.imgURL" class="truyenImg" style="border-radius: 10px;" />
+                            <br />
+                            <b class="ten-truyen" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size:15px; margin:0">@truyen.TenTruyen</b>
+                            <div style="font-size:15px">
+                                <p style="margin:0">
+                                @if (truyen.TrangThai == TrangThai.DangRa)
+                                {
+                                            <span style="margin:0" class="badge bg-danger">Đang ra</span>
+                                }
+                                else
+                                {
+                                            <span style="margin:0" class="badge bg-success">Đã hoàn thành</span>
+                                }
+                                </p>
+                                <p style="margin:0">Số chương: @truyen.listChuong.Count()</p>
+                                <p style="margin:0"><i class="bi bi-eye"></i> @ViewBag.dic[truyen.Id]</p>
+                            </div>
+                        </a>
+                        <button class="btn py-0 px-1" onclick="showModal(@truyen.Id)"><i class="bi bi-info-circle"></i> Preview</button>
+                    </div>
+
+                    <div id="modal-@truyen.Id" class="modal" style="display:none;">
+                        <div class="modal-content" style="width:1000px; height: 650px; border-radius: 10px;">
+                            <a asp-action="Read" asp-controller="Truyen" asp-route-id="@truyen.Id" asp-route-page="1" class="text-decoration-none">
+                                <div style="text-align: center; margin-bottom: 20px;">
+                                    <img src="@truyen.imgURL" class="truyenImg" alt="@truyen.TenTruyen" style="border-radius: 10px;">
+                                </div>
+                                <h2 style="font-size: 1.5rem; color: #333;">@truyen.TenTruyen</h2>
+                            </a>
+                            <p style="font-style: italic; color: #555;">Tác giả: @truyen.TacGia.Ten</p>
+                            <div>
+                                <p>
+                                    <strong>Thể loại:</strong>
+                                @foreach (var tloai in truyen.listTheLoai)
+                                {
+                                            <span style="background-color: #f0f0f0; padding: 5px 10px; border-radius: 5px; margin-right: 5px;">@tloai.TheLoai.Ten</span>
+                                }
+                                </p>
+                                <p><strong>Số chương:</strong> @truyen.listChuong.Count()</p>
+                                <p><i class="bi bi-eye"></i> Lượt xem: @ViewBag.dic[truyen.Id]</p>
+                                <p><strong>Mô tả:</strong> <span style="display: block; max-height: 100px; overflow-y: auto;">@truyen.MoTa</span></p>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+        }
+    </div>
+
 </div>
 
-<div class="row d-flex w-100">
-    @foreach (var truyen in Model)
-    {
-        <div class="col-lg-3 col-md-3 col-sm-4 rounded-3 text-center flex-column my-4">
-
-            <div class="border border-dark border-0  p-0 truyenborder" style="width: 200px; height: auto">
-                <a asp-action="Read" asp-controller="Truyen" asp-route-id="@truyen.Id" asp-route-page="1" class="text-decoration-none">
-                    <img src="@truyen.imgURL" class="truyenImg" />
-                    <br />
-                    <b class="ten-truyen" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">@truyen.TenTruyen</b>
-                    <br />
-                    <p>
-                        <strong class="text-black">Trạng thái:</strong>
-                        @if (truyen.TrangThai == TrangThai.DangRa)
-                        {
-                            <span class="badge bg-danger">Đang ra</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-success">Đã hoàn thành</span>
-                        }
-                    </p>
-                    <p>Số chương: @truyen.listChuong.Count()</p>
-                </a>
-            </div>
-
-        </div>
+<script>
+    function showModal(id) {
+        const modal = document.getElementById('modal-' + id);
+        modal.style.display = 'flex'; // Dùng flex để căn giữa
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.opacity = '1';
+        }, 10);
     }
-</div>
+
+    function hideModal(id) {
+        const modal = document.getElementById('modal-' + id);
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); // Chờ hiệu ứng fade-out hoàn tất
+    }
+
+    // Thêm sự kiện click vào vùng tối bên ngoài modal
+    document.addEventListener('click', function (event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300); // Chờ hiệu ứng fade-out hoàn tất
+            }
+        });
+    });
+
+    // Hiệu ứng fade-in khi cuộn chuột đến các truyện
+    const truyenItems = document.querySelectorAll('.truyen-item');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    truyenItems.forEach(item => {
+        observer.observe(item);
+    });
+</script>
+
+<style>
+    .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.6); /* Hiệu ứng tối nền */
+        animation: fadeIn 0.5s ease-in-out; /* Hiệu ứng mở */
+    }
+
+    .modal-content {
+        background-color: #ffffff;
+        padding: 20px 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 600px; /* Giới hạn chiều rộng */
+        font-family: 'Roboto', sans-serif;
+        animation: slideDown 0.5s ease-in-out; /* Hiệu ứng trượt */
+    }
+
+    .close {
+        color: #333;
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+        .close:hover {
+            color: #f44336; /* Màu đỏ khi hover */
+        }
+
+    /* Hiệu ứng mở modal */
+</style>

@@ -200,13 +200,14 @@ namespace DangTienDaoVien.Controllers
                 int count;
                 if (temp == null) count = 1;
                 else count = temp.Count() + 1;
-                var user_truyen = new UserTruyen()
-                {
-                    Id = count,
-                    UserId = user.UserId,
-                    TruyenId = truyen.Id,
-                    DateTime = DateTime.Now
-                };
+				var user_truyen = new UserTruyen()
+				{
+					Id = count,
+					UserId = user.UserId,
+					TruyenId = truyen.Id,
+					DateTime = DateTime.Now,
+					STT = _unitOfWork.ChuongTruyenRepo.Get(u => u.Id == ChuongTruyenId).STT
+				}; 
                 _unitOfWork.UserTruyenRepo.Add(user_truyen);
                 _unitOfWork.Save();
             }

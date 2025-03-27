@@ -22,7 +22,9 @@ builder.WebHost.ConfigureKestrel((context, options) =>
 	var kestrelLimits = context.Configuration.GetSection("Kestrel:Limits");
 	options.Limits.MaxRequestBodySize = kestrelLimits.GetValue<long>("MaxRequestBodySize");
 });
-
+builder.Services.AddHttpClient<GeminiChatBotService>();
+builder.Services.AddHttpClient<APIService>();
+builder.Services.AddSingleton<GeminiChatBotService>(); 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();

@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="~/css/index.css" />
 <div>
     <div class="mb-lg-5">
-        <h2 style="font-family:serif; color:black" class=" py-1"><b>Danh sách truyện:</b></h2>
+        <h4 style="font-family:Tahoma" class=" py-1"><b>Danh sách truyện của tác giả:</b> @Model.FirstOrDefault().TacGia.Ten</h4>
+        <p><b>Mô tả tác giả:</b> @ViewBag.TG.MoTa</p>
     </div>
 
     <div class="row d-flex">
